@@ -1,11 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { AppRegistry, Text, View, TextInput, TouchableHighlight, StyleSheet } from 'react-native';
+import {AppRegistry, Text, View, TextInput, TouchableHighlight, StyleSheet, ScrollView} from 'react-native';
 
 export default class App extends Component {
   state = {
     recipient: ' ',
     message: ' ',
+    messageSent: false,
   }
 
   render() {
@@ -17,7 +18,7 @@ export default class App extends Component {
             <View style={styles.titleBox}>
 
               <Text style={styles.titleText}>
-                New Message
+                New Message2
               </Text>
 
             </View>
@@ -43,6 +44,9 @@ export default class App extends Component {
           </View>
 
           <View style={styles.whiteBox}>
+            <Text>
+              {this.state.message}
+            </Text>
           </View>
 
           <View style={styles.bar}>
@@ -52,6 +56,7 @@ export default class App extends Component {
             />
             <TouchableHighlight style={styles.sendBox}
                                 onPress={() => {
+                                  this.state.messageSent = true
                                   alert(this.state.recipient + ' received your message: ' + this.state.message)
                                 }}>
               <Text style={styles.blueText}>
