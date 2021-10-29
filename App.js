@@ -176,9 +176,9 @@ import {
 // });
 const Stack = createNativeStackNavigator();
 
+//LEFT OFF AT 9:41...starting to work on individual chat ui
 //This is trial data...will be replaced with firebase stuff after
 const Messages = [
-
     {
         id: '1',
         username: 'Jenny Doe',
