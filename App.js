@@ -219,7 +219,14 @@ const App = () => {
               component={HomeScreen}
               options={{ title: 'Messages' }}
           />
-          <Stack.Screen name="Chat" component={ChatScreen} />
+          <Stack.Screen
+              name="Chat"
+              component={ChatScreen}
+              options={({route})=>({
+                  title: route.params.username,
+                  headerBackTitleVisible: false
+              })}
+          />
         </Stack.Navigator>
       </NavigationContainer>
   );
@@ -233,7 +240,7 @@ const HomeScreen = ({ navigation }) => {
           keyExtractor={item => item.id}
           renderItem={({item}) =>(
               <Card onPress={() =>
-                  navigation.navigate('Chat',{name:item.username})
+                  navigation.navigate('Chat', {username:item.username})
               }>
                   <UserInfo>
                       <UserImgWrapper>
@@ -258,7 +265,7 @@ const HomeScreen = ({ navigation }) => {
 };
 
 const ChatScreen = ({ navigation, route }) => {
-  return <Text> This will display chat history with {route.params.name}</Text>;
+  return <Text> This will display chat history with {route.params.username}</Text>;
 };
 
 export default App;
