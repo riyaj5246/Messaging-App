@@ -250,10 +250,10 @@ const HomeScreen = ({ navigation }) => {
                       </TextSection>
                   </UserInfo>
               </Card>
+
           )}
       />
       </Container>
-
   )
 };
 
