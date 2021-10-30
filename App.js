@@ -46,6 +46,9 @@ const UserProfiles = [
         messageText: 'Text 4',
     }
 ]
+
+//messages collection has to be structured slightly differently --> rn, each chat has the same common incoming and outgoing messages
+//no differentiation being made between different users, obv cant be case irl
 const Messages = [
     {
         _id: 1, //message ID
