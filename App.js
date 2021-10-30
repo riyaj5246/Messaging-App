@@ -11,157 +11,11 @@ import {Container, Card, UserInfo, UserImgWrapper, UserImg,UserInfoText, UserNam
 
 import {AppRegistry, Text, View, TextInput, TouchableHighlight, StyleSheet, ScrollView, Button, FlatList} from 'react-native';
 
-// export default class App extends Component {
-//   state = {
-//     recipient: ' ',
-//     message: ' ',
-//     messageSent: false,
-//   }
-//
-//   render() {
-//     return (
-//         <View style={styles.container}>
-//
-//           <View style={styles.bar}>
-//
-//             <View style={styles.titleBox}>
-//
-//               <Text style={styles.titleText}>
-//                 New Message2
-//               </Text>
-//
-//             </View>
-//
-//             <View style={styles.cancelBox}>
-//
-//               <Text style={styles.blueText}>
-//                 Cancel
-//               </Text>
-//
-//             </View>
-//           </View>
-//           <View style={styles.bar}>
-//             <View style={styles.recipientBox}>
-//               <Text style={styles.recipientText}>
-//                 To:
-//               </Text>
-//             </View>
-//             <TextInput style={styles.recipientInput}
-//                        onChangeText={(recipient) => this.setState({recipient})}
-//                        value={this.state.recipient}
-//             />
-//           </View>
-//
-//           <View style={styles.whiteBox}>
-//             <Text>
-//               {this.state.message}
-//             </Text>
-//           </View>
-//
-//           <View style={styles.bar}>
-//             <TextInput style={styles.messageInput}
-//                        onChangeText={(message) => this.setState({message})}
-//                        value={this.state.message}
-//             />
-//             <TouchableHighlight style={styles.sendBox}
-//                                 onPress={() => {
-//                                   this.state.messageSent = true
-//                                   alert(this.state.recipient + ' received your message: ' + this.state.message)
-//                                 }}>
-//               <Text style={styles.blueText}>
-//                 Send
-//               </Text>
-//             </TouchableHighlight>
-//           </View>
-//         </View>
-//     );
-//   }
-// }
-//
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: 'white',
-//   },
-//   bar: {
-//     flexDirection: 'row',
-//     width: 415,
-//    //height: 125,
-//     backgroundColor: '#edeceb',
-//   },
-//   titleBox: {
-//     width: 300,
-//     height: 125,
-//     justifyContent: 'center',
-//     backgroundColor: '#edeceb',
-//   },
-//   titleText: {
-//     textAlign: 'center',
-//     paddingTop: 40,
-//     paddingLeft: 55,
-//     fontSize: 30,
-//     fontFamily: 'Arial',
-//   },
-//   cancelBox: {
-//     height: 100,
-//     width: 115,
-//     justifyContent: 'center',
-//     paddingTop: 70,
-//     paddingRight: 20,
-//     backgroundColor: '#edeceb',
-//   },
-//   blueText: {
-//     color: 'blue',
-//     fontSize: 20,
-//     fontFamily: 'Arial',
-//     textAlign: 'center',
-//   },
-//   recipientBox: {
-//     height: 50,
-//     width: 50,
-//     backgroundColor: '#edeceb',
-//     justifyContent: 'center',
-//     borderTopColor: '#a19f9d',
-//     borderTopWidth: 5,
-//   },
-//   recipientText: {
-//     textAlign: 'center',
-//     fontSize: 20,
-//     fontFamily: 'Arial',
-//     color: '#a19f9d',
-//   },
-//   recipientInput: {
-//     height: 50,
-//     width: 375,
-//     fontSize: 16,
-//     backgroundColor: '#edeceb',
-//     borderTopColor: '#a19f9d',
-//     borderTopWidth: 5,
-//   },
-//   whiteBox: {
-//     height: 650,
-//   },
-//   messageInput: {
-//     height: 40,
-//     width: 325,
-//     fontSize: 20,
-//     borderColor: '#a19f9d',
-//     borderWidth: 1,
-//     borderRadius: 10,
-//     marginLeft: 10,
-//     marginTop: 5,
-//   },
-//   sendBox: {
-//     marginLeft: 15,
-//     height: 50,
-//     width: 50,
-//     justifyContent: 'center',
-//   },
-// });
 const Stack = createNativeStackNavigator();
 
-//LEFT OFF AT 9:41...starting to work on individual chat ui
+//https://www.youtube.com/playlist?list=PLQWFhX-gwJbmrCwksjn77tdl36dIWPFAt --> playlist of tutorials (UI is based on 10th vid)
 //This is trial data...will be replaced with firebase stuff after
+//both represent collections
 const UserProfiles = [
     {
         id: '1',
@@ -191,6 +45,38 @@ const UserProfiles = [
         messageTime: '2 min ago',
         messageText: 'Text 4',
     }
+]
+const Messages = [
+    {
+        _id: 1, //message ID
+        text: 'Hello developer', //message String
+        createdAt: new Date(), //date/time sent
+        user: {
+            _id: 2, //id of user who SENT (2 --> incoming, 1 --> outgoing)
+            name: 'React Native', //uh not sure, prob just name of framework bc this method is from the react native gifted chat library
+            avatar: 'https://placeimg.com/140/140/any', //user profile pic
+        },
+    },
+    {
+        _id: 2,
+        text: 'Hello world',
+        createdAt: new Date(),
+        user: {
+            _id: 1,
+            name: 'React Native',
+            avatar: 'https://placeimg.com/140/140/any',
+        },
+    },
+    {
+        _id: 3,
+        text: 'Hello world v3',
+        createdAt: new Date(),
+        user: {
+            _id: 1,
+            name: 'React Native',
+            avatar: 'https://placeimg.com/140/140/any',
+        },
+    },
 ]
 
 const App = () => {
@@ -251,40 +137,8 @@ const ChatScreen = ({ navigation, route }) => {
 
     const [messages, setMessages] = useState([]);
 
-    //manually hardcoding messages --> will be replaced with database code
     useEffect(() => {
-        setMessages([
-            {
-                _id: 1, //message ID
-                text: 'Hello developer', //message String
-                createdAt: new Date(), //date/time sent
-                user: {
-                    _id: 2, //id of user who SENT (2 --> incoming, 1 --> outgoing)
-                    name: 'React Native', //uh not sure, prob just name of framework bc this method is from the react native gifted chat library
-                    avatar: 'https://placeimg.com/140/140/any', //user profile pic
-                },
-            },
-            {
-                _id: 2,
-                text: 'Hello world',
-                createdAt: new Date(),
-                user: {
-                    _id: 1,
-                    name: 'React Native',
-                    avatar: 'https://placeimg.com/140/140/any',
-                },
-            },
-            {
-                _id: 3,
-                text: 'Hello world v3',
-                createdAt: new Date(),
-                user: {
-                    _id: 1,
-                    name: 'React Native',
-                    avatar: 'https://placeimg.com/140/140/any',
-                },
-            },
-        ])
+        setMessages(Messages)
     }, [])
 
     const onSend = useCallback((messages = []) => {
@@ -297,12 +151,18 @@ const ChatScreen = ({ navigation, route }) => {
                 {...props}
                 wrapperStyle={{
                     right: {
-                        backgroundColor: '#2e64e5'
+                        backgroundColor: '#520f76'
+                    },
+                    left: {
+                        backgroundColor: '#0a4b12'
                     }
                 }}
                 textStyle={{
                     right:{
-                       color: '#fff'
+                       color: '#fdfdfd',
+                    },
+                    left:{
+                        color: '#fdfdfd',
                     }
                 }}
                 />
@@ -315,9 +175,9 @@ const ChatScreen = ({ navigation, route }) => {
                 <View>
                     <MaterialCommunityIcons
                         name='send-circle'
-                        style={{marginBottom: 5, marginRight:5}}
-                        size={32}
-                        color='#2e64e5'/>
+                        style={{marginBottom: 3, marginRight:5, marginTop: 3}}
+                        size={40}
+                        color='#520f76'/>
                 </View>
             </Send>
         );
@@ -325,7 +185,7 @@ const ChatScreen = ({ navigation, route }) => {
 
     const scrollToBottomComponent = () => {
         return(
-            <FontAwesome name='angle-double-down' size={22} color='#333' />
+            <FontAwesome name='angle-double-down' size={40} color='#520f76' />
         );
     }
 
@@ -344,7 +204,6 @@ const ChatScreen = ({ navigation, route }) => {
         />
     )
 };
-
 
 export default App;
 
