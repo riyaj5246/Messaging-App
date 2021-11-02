@@ -5,6 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {Bubble, GiftedChat, Send} from 'react-native-gifted-chat';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+// import firestore from '@react-native-firebase/firestore'
+
 
 
 import {Container, Card, UserInfo, UserImgWrapper, UserImg,UserInfoText, UserName, PostTime, MessageText, TextSection,} from './styles/MessageStyles';
@@ -15,11 +17,72 @@ const Stack = createNativeStackNavigator();
 
 //https://www.youtube.com/playlist?list=PLQWFhX-gwJbmrCwksjn77tdl36dIWPFAt --> playlist of tutorials (UI is based on 10th vid)
 //This is trial data...will be replaced with firebase stuff after
+
+
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import firebase from "firebase/compat";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyDwPIEBpT-qbns0vHVmCQm_OJ5tNHuDfOE",
+    authDomain: "messagingapp-a0a20.firebaseapp.com",
+    databaseURL: "https://messagingapp-a0a20-default-rtdb.firebaseio.com",
+    projectId: "messagingapp-a0a20",
+    storageBucket: "messagingapp-a0a20.appspot.com",
+    messagingSenderId: "25634088239",
+    appId: "1:25634088239:web:7ddf4c4c7ceabc46dfedda"
+};
+
+// Initialize Firebase
+
+let app
+
+if (firebase.apps.length === 0){
+    app = firebase.initializeApp(firebaseConfig)
+} else {
+    app = firebase.app()
+}
+
+const firestore = firebase.firestore();
+
+const users = []
+const messages = []
+let currentUser = '';
+let currentUserIndex = 0;
+
+function doThing(){
+    firestore.collection("Users").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            users.push(doc.data());
+        });
+    });
+    firestore.collection("Messages").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            messages.push(doc.data());
+        });
+    });
+}
+
+
+doThing()
+
+
+
+
 //both represent collections
 const UserProfiles = [
     {
         id: '1',
-        username: 'Jenny Doe',
+        username: 'l',
         userImg: require('./assets/favicon.png'),
         messageTime: '4 min ago',
         messageText: 'Hey there, this is a test for React Native',
@@ -62,7 +125,7 @@ const Messages = [
     },
     {
         _id: 2,
-        text: 'Hello world',
+        text: 'React Native',
         createdAt: new Date(),
         user: {
             _id: 1,
@@ -87,6 +150,11 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
+               name="Login"
+               component={LoginScreen}
+               options={{ title: 'Login' }}
+          />
+          <Stack.Screen
               name="Home"
               component={HomeScreen}
               options={{ title: 'Messages' }}
@@ -108,11 +176,13 @@ const HomeScreen = ({ navigation }) => {
   return (
       <Container>
           <FlatList
-          data={UserProfiles}
+          data={recentMessages}
           keyExtractor={item => item.id}
           renderItem={({item}) =>(
               <Card onPress={() =>
+
                   navigation.navigate('Chat', {username:item.username})
+
               }>
                   <UserInfo>
                       <UserImgWrapper>
@@ -134,6 +204,54 @@ const HomeScreen = ({ navigation }) => {
       </Container>
   )
 };
+
+
+const LoginScreen = ({ navigation }) => {
+    const [text, setText] = useState('');
+    return(
+        <View>
+            <TextInput
+                onChangeText={text => setText(text)}
+                defaultValue={text}
+            />
+            <TouchableHighlight
+                                onPress={() => {
+                                    currentUser = text
+                                    setMessages(text)
+                                    navigation.navigate('Home')
+                              }}>
+                <Text >
+                    Send
+                </Text>
+            </TouchableHighlight>
+        </View>
+    )
+
+}
+
+function setMessages(){
+    let newUser = true
+    for (let i = 0; i < users.length; i++){
+        console.log('check');
+        if (users[i].username === currentUser) {
+            newUser = false
+            currentUserIndex = i;
+        }
+    }
+
+    if (newUser){
+        currentUserIndex = users.length
+        firestore
+            .collection('Users')
+            .doc(String( currentUserIndex + 1))
+            .set({
+                username: currentUser
+            })
+            .then(() => {
+                console.log('User added!');
+            });
+    }
+}
 
 const ChatScreen = ({ navigation, route }) => {
   // return <Text> This will display chat history with {route.params.username}</Text>;
@@ -172,6 +290,7 @@ const ChatScreen = ({ navigation, route }) => {
         );
     }
 
+
     const renderSend = (props) => {
         return(
             <Send {...props}>
@@ -207,6 +326,7 @@ const ChatScreen = ({ navigation, route }) => {
         />
     )
 };
+
 
 export default App;
 
